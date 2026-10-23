@@ -80,17 +80,13 @@ bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
     {
         // Add the position of the bouncer to x_sum
         x_sum += bouncer.get_x_pos();
-        BN_LOG("X position is: ", x_sum);
     }
     bn::fixed x_average = x_sum;
-    BN_LOG("Sum is :", x_average);
 
     // Only divide if we have 1 or more
     // Prevents division by 0
     if (bouncers.size() > 0)
     {
-        BN_LOG("Total number of bouncers is: ", bouncers.size());
-        BN_LOG("Sum divided by total bouncers is: ", (x_sum / bouncers.size()));
         x_average /= bouncers.size();
     }
 
