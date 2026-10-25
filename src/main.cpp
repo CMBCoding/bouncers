@@ -45,10 +45,20 @@ public:
         return x_pos;
     }
 
+    // Methof to get the y-coordinate of a bouncer
+    bn::fixed get_y_pos()
+    {
+        bn::fixed y_pos = sprite.y();
+        return y_pos;
+    }
+
     void update()
     {
         bn::fixed x = sprite.x();
         // Update x position by adding speed
+
+        // Get the y position to use the updates
+        bn::fixed y = sprite.y();
 
         // If we've gone off the screen on the right
         if (x > MAX_X)
@@ -67,6 +77,30 @@ public:
 
         x += x_speed;
         sprite.set_x(x);
+
+        /* Task - If we are updating the program to add y-axis bouncing
+        , the code should, in theory, be very similar to what is above.
+        */
+
+        // If a bouncer ball excedes the bounds of the top of the screen...
+        if (y > MAX_Y)
+        {
+            // Pull the ball back within the screen's bounds
+            y = MAX_Y;
+            // Send it in the opposite direction by multiplying it with -1
+            y_speed *= -1;
+        }
+
+        if (y < MIN_Y)
+        {
+            // Pull the ball back within the screen's bounds
+            y = MIN_Y;
+            // Send it in the opposite direction by multiplying it with -1
+            y_speed *= -1;
+        }
+
+        y += y_speed;    // Increase the sprite's y-position. by the value of y_speed.
+        sprite.set_y(y); // Set the sprite's y-position.
     }
 
 private:
@@ -114,7 +148,7 @@ int main()
     // Create an instance of a bouncer
     bn::vector<Bouncer, MAX_BOUNCERS> bouncers = {};
 
-    bn::fixed y_spawn = 0;
+    // bn::fixed y_spawn = 0;
 
     // Bouncer manual = Bouncer(-30, 25);
 
@@ -122,7 +156,7 @@ int main()
     {
         if (bn::keypad::a_pressed())
         {
-            add_bouncer(bouncers, 0, y_spawn);
+            add_bouncer(bouncers, 0, 0);
         }
 
         for (Bouncer &b : bouncers)
@@ -130,12 +164,12 @@ int main()
             b.update();
         }
 
-        y_spawn += 1;
+        // y_spawn += 1;
 
-        if (y_spawn > MAX_Y)
-        {
-            y_spawn = MIN_Y;
-        }
+        // if (y_spawn > MAX_Y)
+        // {
+        //     y_spawn = MIN_Y;
+        // }
 
         // if A is pressed add a new bouncer
         // if (bn::keypad::a_pressed())
