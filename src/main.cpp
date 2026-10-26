@@ -19,10 +19,7 @@ coordinate grid with the center at 0,0
 */
 #include "bn_random.h"
 
-// Set spawn limit for the x-axis
-//  bn::random spawn_x;
-//  //Set spawn limit for the y-axis
-//  bn::random spawn_y;
+// Initialize a random instance to use in the program.
 bn::random gen;
 
 #include "bn_sprite_items_dot.h"
@@ -36,8 +33,21 @@ static constexpr int HALF_SCREEN_HEIGHT = bn::display::height() / 2;
 static constexpr bn::fixed MIN_Y = -HALF_SCREEN_HEIGHT;
 static constexpr bn::fixed MAX_Y = HALF_SCREEN_HEIGHT;
 
+// Random generator for the speed of the bouncers
+bn::fixed rand_speed = gen.get_fixed(1, 10);
+
+// Method to create and return a random speed for the spawned bouncers
+bn::fixed set_random_speed()
+{
+    // Randomly generate a speed between 1 and 10
+    bn::fixed random_speed = gen.get_fixed(1, 11);
+    BN_LOG("Random speed is :", random_speed);
+    return random_speed;
+};
+
 // Starting speed of a bouncer
-static constexpr bn::fixed BASE_SPEED = 2;
+bn::fixed BASE_SPEED = 1;
+
 
 // Maximum number of bouncers on screen at once
 static constexpr int MAX_BOUNCERS = 20;
@@ -48,13 +58,14 @@ public:
     bn::sprite_ptr sprite; // Sprite
     bn::fixed x_speed;     // Speed of the sprite
     bn::fixed y_speed;     // Horizontal speed of the sprite
+    // bn::fixed rand_speed = gen.get_fixed(1, 10);
 
     // Constructor
     // Creates the sprite at the x and y
     // Create a dot sprite
     // Set the speed of the sprite to the base speed
     Bouncer(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::dot.create_sprite(x_start, y_start)),
-                                                    x_speed(BASE_SPEED), y_speed(BASE_SPEED) {};
+                                                    x_speed(BASE_SPEED = set_random_speed()), y_speed(BASE_SPEED = set_random_speed()) {};
 
     // Method to get the x-coordinate of a bouncer
     bn::fixed get_x_pos()
@@ -146,6 +157,7 @@ void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers,
 {
     if (bouncers.size() < bouncers.max_size())
     {
+        // bn::fixed random_speed = gen.get_fixed(1, 10);
         bouncers.push_back(Bouncer(start_x, start_y));
     };
 }
@@ -156,15 +168,15 @@ int main()
     // Create an instance of a bouncer
     bn::vector<Bouncer, MAX_BOUNCERS> bouncers = {};
 
-
     while (true)
     {
         if (bn::keypad::a_pressed())
         {
-            //Generate a random spawn for the bouncers within the screen's bounds.
+            // Generate a random spawn for the bouncers within the screen's bounds.
             bn::fixed spawn_x = gen.get_fixed(MIN_X, MAX_X);
             bn::fixed spawn_y = gen.get_fixed((MIN_Y + 8), (MAX_Y - 8));
-            //Uset those spawns to populate the screen with bouncers.
+
+            // Uset those spawns to populate the screen with bouncers.
             add_bouncer(bouncers, spawn_x, spawn_y);
         }
 
