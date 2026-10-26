@@ -17,8 +17,10 @@ coordinate grid with the center at 0,0
 ◎ (Later) use the randoms to set the speed of each bouncer.
 
 */
-#include "bn_random.h"         //Included to generate random numbers.
-#include "bn_sprite_actions.h" //Included to add spinning and looping.
+#include "bn_random.h"              //Included to generate random numbers.
+#include "bn_sprite_actions.h"      //Included to add spinning and looping.
+#include "bn_regular_bg_ptr.h"      //Included to allow the use of background.
+#include "bn_regular_bg_items_bg.h" //Included to allow the use of the bg background item.
 
 // Initialize a random instance to use in the program.
 bn::random gen;
@@ -59,7 +61,7 @@ public:
     bn::fixed x_speed;        // Speed of the sprite
     bn::fixed y_speed;        // Horizontal speed of the sprite
     bn::fixed spin_angle = 0; // Set the intial angle of the bouncer
-    bn::fixed spin_max = 360; //The maximum rotation angle
+    bn::fixed spin_max = 360; // The maximum rotation angle
 
     // Constructor
     // Creates the sprite at the x and y
@@ -164,7 +166,6 @@ void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers,
 {
     if (bouncers.size() < bouncers.max_size())
     {
-        // bn::fixed random_speed = gen.get_fixed(1, 10);
         bouncers.push_back(Bouncer(start_x, start_y));
     };
 }
@@ -178,12 +179,13 @@ void spin(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
         // Increment the spin angle of the bouncer
         b.spin_angle += 5;
 
-        //Reset the angle of spin to avoid overflow...
-        if (b.spin_angle >= b.spin_max) {
-            //by subtracting spin_max (360) from the spin angle
+        // Reset the angle of spin to avoid overflow...
+        if (b.spin_angle >= b.spin_max)
+        {
+            // by subtracting spin_max (360) from the spin angle
             b.spin_angle -= b.spin_max;
         }
-        //Then set the rotation angle of the sprite.
+        // Then set the rotation angle of the sprite.
         b.get_sprite().set_rotation_angle(b.spin_angle);
     }
 }
@@ -191,6 +193,9 @@ void spin(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 int main()
 {
     bn::core::init();
+    // Create a background and place it at the screen's center
+    bn::regular_bg_ptr bg = bn::regular_bg_items::bg.create_bg(0, 0);
+
     // Create an instance of a bouncer
     bn::vector<Bouncer, MAX_BOUNCERS> bouncers = {};
 
