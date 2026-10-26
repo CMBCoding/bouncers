@@ -6,6 +6,12 @@
 #include <bn_random.h>
 #include <bn_vector.h>
 #include <bn_log.h>
+#include "bn_sprite_items_dot.h"
+#include "bn_random.h"              //Included to generate random numbers.
+#include "bn_sprite_actions.h"      //Included to add spinning and looping.
+#include "bn_regular_bg_ptr.h"      //Included to allow the use of background.
+#include "bn_regular_bg_items_bg.h" //Included to allow the use of the bg background item.
+#include "bn_math.h"                //Included to to allow the use of safe_degrees_angle in the spin function.
 
 /* Import random to begin use of random generated numbers
 ◎ Use the random generated numbers to set the spawn coordinates of
@@ -17,31 +23,25 @@ coordinate grid with the center at 0,0
 ◎ (Later) use the randoms to set the speed of each bouncer.
 
 */
-#include "bn_random.h"              //Included to generate random numbers.
-#include "bn_sprite_actions.h"      //Included to add spinning and looping.
-#include "bn_regular_bg_ptr.h"      //Included to allow the use of background.
-#include "bn_regular_bg_items_bg.h" //Included to allow the use of the bg background item.
-#include "bn_math.h"
 
 // Initialize a random instance to use in the program.
 bn::random gen;
 
-#include "bn_sprite_items_dot.h"
-
-// Set max/min x position to be the edges of the display
+// Set max/min x position to be the edges of the display.
 static constexpr int HALF_SCREEN_WIDTH = bn::display::width() / 2;
 static constexpr bn::fixed MIN_X = -HALF_SCREEN_WIDTH;
 static constexpr bn::fixed MAX_X = HALF_SCREEN_WIDTH;
 
+// Set the max/min y position to be the edges of the display.
 static constexpr int HALF_SCREEN_HEIGHT = bn::display::height() / 2;
 static constexpr bn::fixed MIN_Y = -HALF_SCREEN_HEIGHT;
 static constexpr bn::fixed MAX_Y = HALF_SCREEN_HEIGHT;
 
-// Random generator for the speed of the bouncers
+// Random generator for the speed of the bouncers.
 bn::fixed rand_speed = gen.get_fixed(1, 10);
 
-// Method to create and return a random speed for the spawned bouncers
-bn::fixed set_random_speed()
+    // Method to create and return a random speed for the spawned bouncers
+    bn::fixed set_random_speed()
 {
     // Randomly generate a speed between 1 and 10
     bn::fixed random_speed = gen.get_fixed(1, 11);
@@ -90,6 +90,8 @@ public:
         return y_pos;
     }
 
+    /* Method to update the x and y coordinates of the bouncer, its speed at both angles
+    and the actions to take if it meets the bounds of the screen.*/
     void update()
     {
         bn::fixed x = sprite.x();
@@ -161,6 +163,7 @@ bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
     return x_average;
 };
 
+// Method that adds bouncers to the prexisting bouncers vector.
 void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers,
                  bn::fixed start_x, bn::fixed start_y)
 {
@@ -181,8 +184,7 @@ void spin(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 
         /* Set the rotation to a safe integer by using safe_degrees_angle
         Sending spin_angle to that function ensures that the number returned is always between
-        0 - 360.
-        */
+        0 - 360. */
         b.get_sprite().set_rotation_angle(bn::safe_degrees_angle(b.spin_angle));
     }
 }
@@ -208,8 +210,10 @@ int main()
             add_bouncer(bouncers, spawn_x, spawn_y);
         }
 
+        // Call the spin function on the bouncers.
         spin(bouncers);
 
+        // For each bouncer on in the vector, call the update function.
         for (Bouncer &b : bouncers)
         {
             b.update();
@@ -222,8 +226,6 @@ int main()
             BN_LOG("Average x: ", x_average);
         }
 
-        // }
-        // manual.update();
         bn::core::update();
     }
 }
