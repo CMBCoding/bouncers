@@ -14,10 +14,11 @@ each bouncer.
 coordinate grid with the center at 0,0
     - We already have consexpr that set the bounds of the screen
         - These are our spawn boundaries.
-- (Later) use the randoms to set the speed of each bouncer.
+◎ (Later) use the randoms to set the speed of each bouncer.
 
 */
-#include "bn_random.h"
+#include "bn_random.h"         //Included to generate random numbers.
+#include "bn_sprite_actions.h" //Included to add spinning and looping.
 
 // Initialize a random instance to use in the program.
 bn::random gen;
@@ -54,9 +55,11 @@ static constexpr int MAX_BOUNCERS = 20;
 class Bouncer
 {
 public:
-    bn::sprite_ptr sprite; // Sprite
-    bn::fixed x_speed;     // Speed of the sprite
-    bn::fixed y_speed;     // Horizontal speed of the sprite
+    bn::sprite_ptr sprite;    // Sprite
+    bn::fixed x_speed;        // Speed of the sprite
+    bn::fixed y_speed;        // Horizontal speed of the sprite
+    bn::fixed spin_angle = 0; // Set the intial angle of the bouncer
+    bn::fixed spin_max = 360; //The maximum rotation angle
 
     // Constructor
     // Creates the sprite at the x and y
@@ -70,6 +73,12 @@ public:
     {
         bn::fixed x_pos = sprite.x();
         return x_pos;
+    };
+
+    // Method to get the sprite out of a bouncer.
+    bn::sprite_ptr get_sprite()
+    {
+        return sprite;
     }
 
     // Method to get the y-coordinate of a bouncer
@@ -160,6 +169,25 @@ void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers,
     };
 }
 
+// Method to spin the dot using the spin_angle variable
+void spin(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
+{
+    // For every bouncer within bouncers
+    for (Bouncer &b : bouncers)
+    {
+        // Increment the spin angle of the bouncer
+        b.spin_angle += 5;
+
+        //Reset the angle of spin to avoid overflow...
+        if (b.spin_angle >= b.spin_max) {
+            //by subtracting spin_max (360) from the spin angle
+            b.spin_angle -= b.spin_max;
+        }
+        //Then set the rotation angle of the sprite.
+        b.get_sprite().set_rotation_angle(b.spin_angle);
+    }
+}
+
 int main()
 {
     bn::core::init();
@@ -174,9 +202,11 @@ int main()
             bn::fixed spawn_x = gen.get_fixed(MIN_X, MAX_X);
             bn::fixed spawn_y = gen.get_fixed((MIN_Y + 8), (MAX_Y - 8));
 
-            // Uset those spawns to populate the screen with bouncers.
+            // Use those spawns to populate the screen with bouncers.
             add_bouncer(bouncers, spawn_x, spawn_y);
         }
+
+        spin(bouncers);
 
         for (Bouncer &b : bouncers)
         {
