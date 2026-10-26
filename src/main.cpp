@@ -21,6 +21,7 @@ coordinate grid with the center at 0,0
 #include "bn_sprite_actions.h"      //Included to add spinning and looping.
 #include "bn_regular_bg_ptr.h"      //Included to allow the use of background.
 #include "bn_regular_bg_items_bg.h" //Included to allow the use of the bg background item.
+#include "bn_math.h"
 
 // Initialize a random instance to use in the program.
 bn::random gen;
@@ -61,7 +62,6 @@ public:
     bn::fixed x_speed;        // Speed of the sprite
     bn::fixed y_speed;        // Horizontal speed of the sprite
     bn::fixed spin_angle = 0; // Set the intial angle of the bouncer
-    bn::fixed spin_max = 360; // The maximum rotation angle
 
     // Constructor
     // Creates the sprite at the x and y
@@ -179,14 +179,11 @@ void spin(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
         // Increment the spin angle of the bouncer
         b.spin_angle += 5;
 
-        // Reset the angle of spin to avoid overflow...
-        if (b.spin_angle >= b.spin_max)
-        {
-            // by subtracting spin_max (360) from the spin angle
-            b.spin_angle -= b.spin_max;
-        }
-        // Then set the rotation angle of the sprite.
-        b.get_sprite().set_rotation_angle(b.spin_angle);
+        /* Set the rotation to a safe integer by using safe_degrees_angle
+        Sending spin_angle to that function ensures that the number returned is always between
+        0 - 360.
+        */
+        b.get_sprite().set_rotation_angle(bn::safe_degrees_angle(b.spin_angle));
     }
 }
 
