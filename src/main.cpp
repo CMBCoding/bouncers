@@ -48,7 +48,6 @@ bn::fixed set_random_speed()
 // Starting speed of a bouncer
 bn::fixed BASE_SPEED = 1;
 
-
 // Maximum number of bouncers on screen at once
 static constexpr int MAX_BOUNCERS = 20;
 
@@ -58,7 +57,6 @@ public:
     bn::sprite_ptr sprite; // Sprite
     bn::fixed x_speed;     // Speed of the sprite
     bn::fixed y_speed;     // Horizontal speed of the sprite
-    // bn::fixed rand_speed = gen.get_fixed(1, 10);
 
     // Constructor
     // Creates the sprite at the x and y
