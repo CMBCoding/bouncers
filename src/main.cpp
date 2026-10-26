@@ -7,6 +7,24 @@
 #include <bn_vector.h>
 #include <bn_log.h>
 
+/* Import random to begin use of random generated numbers
+◎ Use the random generated numbers to set the spawn coordinates of
+each bouncer.
+◎ Need to use the min and max values for the screen size. It is a
+coordinate grid with the center at 0,0
+    - We already have consexpr that set the bounds of the screen
+        - These are our spawn boundaries.
+- (Later) use the randoms to set the speed of each bouncer.
+
+*/
+#include "bn_random.h"
+
+// Set spawn limit for the x-axis
+//  bn::random spawn_x;
+//  //Set spawn limit for the y-axis
+//  bn::random spawn_y;
+bn::random gen;
+
 #include "bn_sprite_items_dot.h"
 
 // Set max/min x position to be the edges of the display
@@ -36,7 +54,7 @@ public:
     // Create a dot sprite
     // Set the speed of the sprite to the base speed
     Bouncer(bn::fixed x_start, bn::fixed y_start) : sprite(bn::sprite_items::dot.create_sprite(x_start, y_start)),
-                                                    x_speed(BASE_SPEED) {};
+                                                    x_speed(BASE_SPEED), y_speed(BASE_SPEED) {};
 
     // Method to get the x-coordinate of a bouncer
     bn::fixed get_x_pos()
@@ -45,7 +63,7 @@ public:
         return x_pos;
     }
 
-    // Methof to get the y-coordinate of a bouncer
+    // Method to get the y-coordinate of a bouncer
     bn::fixed get_y_pos()
     {
         bn::fixed y_pos = sprite.y();
@@ -77,10 +95,6 @@ public:
 
         x += x_speed;
         sprite.set_x(x);
-
-        /* Task - If we are updating the program to add y-axis bouncing
-        , the code should, in theory, be very similar to what is above.
-        */
 
         // If a bouncer ball excedes the bounds of the top of the screen...
         if (y > MAX_Y)
@@ -139,48 +153,25 @@ void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers,
 int main()
 {
     bn::core::init();
-
-    // Sprites and x speeds of bouncers
-    // Items with the same index correspond to each other
-    // bn::vector<bn::sprite_ptr, MAX_BOUNCERS> sprites = {};
-    // bn::vector<bn::fixed, MAX_BOUNCERS> x_speeds = {};
-
     // Create an instance of a bouncer
     bn::vector<Bouncer, MAX_BOUNCERS> bouncers = {};
 
-    // bn::fixed y_spawn = 0;
-
-    // Bouncer manual = Bouncer(-30, 25);
 
     while (true)
     {
         if (bn::keypad::a_pressed())
         {
-            add_bouncer(bouncers, 0, 0);
+            //Generate a random spawn for the bouncers within the screen's bounds.
+            bn::fixed spawn_x = gen.get_fixed(MIN_X, MAX_X);
+            bn::fixed spawn_y = gen.get_fixed((MIN_Y + 8), (MAX_Y - 8));
+            //Uset those spawns to populate the screen with bouncers.
+            add_bouncer(bouncers, spawn_x, spawn_y);
         }
 
         for (Bouncer &b : bouncers)
         {
             b.update();
         }
-
-        // y_spawn += 1;
-
-        // if (y_spawn > MAX_Y)
-        // {
-        //     y_spawn = MIN_Y;
-        // }
-
-        // if A is pressed add a new bouncer
-        // if (bn::keypad::a_pressed())
-        // {
-        //     // Only add if we're below the maximum
-        //     if (sprites.size() < sprites.max_size())
-        //     {
-        //         sprites.push_back(bn::sprite_items::dot.create_sprite());
-        //         x_speeds.push_back(BASE_SPEED);
-        //     }
-        // }
 
         // // if B is pressed print the average to the console
         if (bn::keypad::b_pressed())
@@ -189,32 +180,6 @@ int main()
             BN_LOG("Average x: ", x_average);
         }
 
-        // for each bouncer
-        // for (int i = 0; i < sprites.size(); i++)
-        // {
-        //     bn::sprite_ptr sprite = sprites[i];
-
-        //     bn::fixed x = sprite.x();
-
-        //     // Update x position by adding speed
-        //     x += x_speeds[i];
-
-        //     // If we've gone off the screen on the right
-        //     if (x > MAX_X)
-        //     {
-        //         // Snap back to screen and reverse direction
-        //         x = MAX_X;
-        //         x_speeds[i] *= -1;
-        //     }
-        //     // If we've gone off the screen on the left
-        //     if (x < MIN_X)
-        //     {
-        //         // Snap back to screen and reverse direction
-        //         x = MIN_X;
-        //         x_speeds[i] *= -1;
-        //     }
-
-        //     sprite.set_x(x);
         // }
         // manual.update();
         bn::core::update();
