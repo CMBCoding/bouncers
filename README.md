@@ -1,6 +1,6 @@
 # Steel Ball Bouncers
 
-Author: Corey Brown (forked from Auberon Lopez's repository).
+Author: Corey Brown (forked from Auberon Lopez's repository: https://github.com/auberonedu/bouncers).
 
 Completion Date: 10/26/2026.
 
