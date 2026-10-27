@@ -35,7 +35,6 @@ bn::fixed set_random_speed()
 {
     // Randomly generate a speed between 1 and 10
     bn::fixed random_speed = gen.get_fixed(1, 11);
-    BN_LOG("Random speed is :", random_speed);
     return random_speed;
 };
 
