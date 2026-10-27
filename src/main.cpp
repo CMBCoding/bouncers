@@ -28,8 +28,6 @@ coordinate grid with the center at 0,0
 // Initialize a random instance to use in the program.
 bn::random gen;
 
-//
-
 // Set max/min x position to be the edges of the display.
 static constexpr int HALF_SCREEN_WIDTH = bn::display::width() / 2;
 static constexpr bn::fixed MIN_X = -HALF_SCREEN_WIDTH;
@@ -92,7 +90,12 @@ public:
         bn::fixed y_pos = sprite.y();
         return y_pos;
     }
-
+    
+    // Method that plays a sound effect whenever a bouncer strikes a screen boundary.
+    void play_collision_sfx()
+    {
+        bn::sound_items::bounce.play();
+    }
     /* Method to update the x and y coordinates of the bouncer, its speed at both angles
     and the actions to take if it meets the bounds of the screen.*/
     void update()
@@ -109,6 +112,8 @@ public:
             // Snap back to screen and reverse direction
             x = MAX_X;
             x_speed *= -1;
+            // Play the bounce sound effect.
+            play_collision_sfx();
         }
         // If we've gone off the screen on the left
         if (x < MIN_X)
@@ -116,6 +121,8 @@ public:
             // Snap back to screen and reverse direction
             x = MIN_X;
             x_speed *= -1;
+            // Play the bounce sound effect.
+            play_collision_sfx();
         }
 
         x += x_speed;
@@ -128,6 +135,8 @@ public:
             y = MAX_Y;
             // Send it in the opposite direction by multiplying it with -1
             y_speed *= -1;
+            // Play the bounce sound effect.
+            play_collision_sfx();
         }
 
         if (y < MIN_Y)
@@ -136,6 +145,8 @@ public:
             y = MIN_Y;
             // Send it in the opposite direction by multiplying it with -1
             y_speed *= -1;
+            // Play the bounce sound effect.
+            play_collision_sfx();
         }
 
         y += y_speed;    // Increase the sprite's y-position. by the value of y_speed.
@@ -145,6 +156,7 @@ public:
 private:
 };
 
+// Method that calculates the average of the x-position of each bouncer.
 bn::fixed average_x(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers)
 {
     // Add all x positions together
