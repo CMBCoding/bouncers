@@ -12,6 +12,7 @@
 #include "bn_regular_bg_ptr.h"      //Included to allow the use of background.
 #include "bn_regular_bg_items_bg.h" //Included to allow the use of the bg background item.
 #include "bn_math.h"                //Included to to allow the use of safe_degrees_angle in the spin function.
+#include "bn_sound_items.h"
 
 /* Import random to begin use of random generated numbers
 ◎ Use the random generated numbers to set the spawn coordinates of
@@ -27,6 +28,8 @@ coordinate grid with the center at 0,0
 // Initialize a random instance to use in the program.
 bn::random gen;
 
+//
+
 // Set max/min x position to be the edges of the display.
 static constexpr int HALF_SCREEN_WIDTH = bn::display::width() / 2;
 static constexpr bn::fixed MIN_X = -HALF_SCREEN_WIDTH;
@@ -40,8 +43,8 @@ static constexpr bn::fixed MAX_Y = HALF_SCREEN_HEIGHT;
 // Random generator for the speed of the bouncers.
 bn::fixed rand_speed = gen.get_fixed(1, 10);
 
-    // Method to create and return a random speed for the spawned bouncers
-    bn::fixed set_random_speed()
+// Method to create and return a random speed for the spawned bouncers
+bn::fixed set_random_speed()
 {
     // Randomly generate a speed between 1 and 10
     bn::fixed random_speed = gen.get_fixed(1, 11);
@@ -170,6 +173,8 @@ void add_bouncer(bn::vector<Bouncer, MAX_BOUNCERS> &bouncers,
     if (bouncers.size() < bouncers.max_size())
     {
         bouncers.push_back(Bouncer(start_x, start_y));
+        // Play the spawn sound effect.
+        bn::sound_items::gen.play();
     };
 }
 
