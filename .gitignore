@@ -48,7 +48,6 @@ build
 
 # GBA compiled files
 *.elf
-*.gba
 *.sav
 
 # JSON hint for site
