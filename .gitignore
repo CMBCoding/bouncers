@@ -52,4 +52,4 @@ build
 *.sav
 
 # JSON hint for site
-/rom.json
+# /rom.json
