@@ -12,18 +12,7 @@
 #include "bn_regular_bg_ptr.h"      //Included to allow the use of background.
 #include "bn_regular_bg_items_bg.h" //Included to allow the use of the bg background item.
 #include "bn_math.h"                //Included to to allow the use of safe_degrees_angle in the spin function.
-#include "bn_sound_items.h"
-
-/* Import random to begin use of random generated numbers
-◎ Use the random generated numbers to set the spawn coordinates of
-each bouncer.
-◎ Need to use the min and max values for the screen size. It is a
-coordinate grid with the center at 0,0
-    - We already have consexpr that set the bounds of the screen
-        - These are our spawn boundaries.
-◎ (Later) use the randoms to set the speed of each bouncer.
-
-*/
+#include "bn_sound_items.h" //Included to to allow the play of sound effects.
 
 // Initialize a random instance to use in the program.
 bn::random gen;
@@ -91,11 +80,6 @@ public:
         return y_pos;
     }
     
-    // Method that plays a sound effect whenever a bouncer strikes a screen boundary.
-    void play_collision_sfx()
-    {
-        bn::sound_items::bounce.play();
-    }
     /* Method to update the x and y coordinates of the bouncer, its speed at both angles
     and the actions to take if it meets the bounds of the screen.*/
     void update()
@@ -112,8 +96,6 @@ public:
             // Snap back to screen and reverse direction
             x = MAX_X;
             x_speed *= -1;
-            // Play the bounce sound effect.
-            play_collision_sfx();
         }
         // If we've gone off the screen on the left
         if (x < MIN_X)
@@ -121,8 +103,6 @@ public:
             // Snap back to screen and reverse direction
             x = MIN_X;
             x_speed *= -1;
-            // Play the bounce sound effect.
-            play_collision_sfx();
         }
 
         x += x_speed;
@@ -135,8 +115,6 @@ public:
             y = MAX_Y;
             // Send it in the opposite direction by multiplying it with -1
             y_speed *= -1;
-            // Play the bounce sound effect.
-            play_collision_sfx();
         }
 
         if (y < MIN_Y)
@@ -145,8 +123,6 @@ public:
             y = MIN_Y;
             // Send it in the opposite direction by multiplying it with -1
             y_speed *= -1;
-            // Play the bounce sound effect.
-            play_collision_sfx();
         }
 
         y += y_speed;    // Increase the sprite's y-position. by the value of y_speed.
